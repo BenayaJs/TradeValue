@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeVault — Sign In</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-void: #030508;
+        --bg-base: #070c12;
+        --bg-panel: #0d1520;
+        --bg-card: #111c2a;
+        --bg-input: #0a1420;
+        --border: #1a2d42;
+        --border-glow: #1e3a55;
+        --text-primary: #e8f4ff;
+        --text-secondary: #7a9bbf;
+        --text-muted: #3d5a75;
+        --accent-green: #00f5a0;
+        --accent-green-dim: rgba(0, 245, 160, 0.1);
+        --accent-blue: #00b4ff;
+        --accent-blue-dim: rgba(0, 180, 255, 0.1);
+        --accent-red: #ff4060;
+        --font-mono: "JetBrains Mono", monospace;
+        --font-display: "Syne", sans-serif;
+        --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bg-void);
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Ambient background glow */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 70% 50% at 20% 20%,
+            rgba(0, 180, 255, 0.05) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 50% 40% at 80% 70%,
+            rgba(0, 245, 160, 0.04) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 40% 30% at 50% 50%,
+            rgba(0, 100, 200, 0.03) 0%,
+            transparent 70%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* Animated grid */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 180, 255, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 180, 255, 0.025) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none;
+        z-index: 0;
+        animation: gridFloat 20s ease-in-out infinite alternate;
+      }
+
+      @keyframes gridFloat {
+        from {
+          transform: translate(0, 0);
+        }
+        to {
+          transform: translate(12px, 12px);
+        }
+      }
+
+      /* Floating orbs */
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: 0;
+        animation: orbFloat 15s ease-in-out infinite alternate;
+      }
+      .orb-1 {
+        width: 400px;
+        height: 400px;
+        background: rgba(0, 180, 255, 0.06);
+        top: -100px;
+        left: -100px;
+        animation-duration: 18s;
+      }
+      .orb-2 {
+        width: 300px;
+        height: 300px;
+        background: rgba(0, 245, 160, 0.05);
+        bottom: -80px;
+        right: -80px;
+        animation-duration: 22s;
+        animation-direction: normal;
+      }
+      @keyframes orbFloat {
+        from {
+          transform: translate(0, 0) scale(1);
+        }
+        to {
+          transform: translate(40px, 30px) scale(1.1);
+        }
+      }
+
+      /* ─── CARD ─── */
+      .login-wrap {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 440px;
+        padding: 16px;
+        animation: cardIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(24px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .login-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 40px 36px 36px;
+        position: relative;
+        overflow: hidden;
+        box-shadow:
+          0 32px 80px rgba(0, 0, 0, 0.6),
+          0 0 0 1px rgba(0, 180, 255, 0.05);
+      }
+      /* Top shimmer */
+      .login-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(0, 180, 255, 0.4),
+          rgba(0, 245, 160, 0.3),
+          transparent
+        );
+      }
+      /* Inner glow */
+      .login-card::after {
+        content: "";
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 120px;
+        background: radial-gradient(
+          ellipse,
+          rgba(0, 180, 255, 0.08),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      /* ─── LOGO ─── */
+      .logo-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 36px;
+      }
+      .logo-icon {
+        width: 52px;
+        height: 52px;
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue),
+          var(--accent-green)
+        );
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 0 30px rgba(0, 180, 255, 0.3);
+        animation: iconPulse 3s ease-in-out infinite;
+      }
+      @keyframes iconPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 20px rgba(0, 180, 255, 0.25);
+        }
+        50% {
+          box-shadow:
+            0 0 40px rgba(0, 180, 255, 0.45),
+            0 0 60px rgba(0, 245, 160, 0.15);
+        }
+      }
+      .logo-title {
+        font-family: var(--font-display);
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: var(--text-primary);
+      }
+      .logo-title span {
+        color: var(--accent-blue);
+      }
+      .logo-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-top: -6px;
+      }
+
+      /* ─── DIVIDER ─── */
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 28px 0;
+      }
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .divider-text {
+        font-size: 10px;
+        color: var(--text-muted);
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      /* ─── GOOGLE BUTTON ─── */
+      .btn-google {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border-glow);
+        border-radius: 12px;
+        padding: 14px 20px;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        letter-spacing: 0.3px;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-google::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(66, 133, 244, 0.08),
+          rgba(52, 168, 83, 0.06)
+        );
+        opacity: 0;
+        transition: var(--transition);
+      }
+      .btn-google:hover {
+        border-color: rgba(66, 133, 244, 0.5);
+        transform: translateY(-1px);
+        box-shadow:
+          0 8px 24px rgba(0, 0, 0, 0.3),
+          0 0 0 1px rgba(66, 133, 244, 0.2);
+      }
+      .btn-google:hover::before {
+        opacity: 1;
+      }
+      .btn-google:active {
+        transform: translateY(0);
+      }
+
+      .google-svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+      }
+      .btn-google-text {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ─── FEATURES LIST ─── */
+      .features {
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 11px;
+        color: var(--text-muted);
+        animation: featureIn 0.5s ease both;
+      }
+      .feature-item:nth-child(1) {
+        animation-delay: 0.3s;
+      }
+      .feature-item:nth-child(2) {
+        animation-delay: 0.4s;
+      }
+      .feature-item:nth-child(3) {
+        animation-delay: 0.5s;
+      }
+      @keyframes featureIn {
+        from {
+          opacity: 0;
+          transform: translateX(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .feature-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-green);
+        flex-shrink: 0;
+        box-shadow: 0 0 6px rgba(0, 245, 160, 0.5);
+      }
+
+      /* ─── FOOTER ─── */
+      .login-footer {
+        margin-top: 28px;
+        text-align: center;
+        font-size: 10px;
+        color: var(--text-muted);
+        line-height: 1.6;
+        letter-spacing: 0.3px;
+      }
+      .login-footer a {
+        color: var(--accent-blue);
+        text-decoration: none;
+        transition: var(--transition);
+      }
+      .login-footer a:hover {
+        color: var(--accent-green);
+      }
+
+      /* ─── STATUS PANEL (shown after login) ─── */
+      .status-panel {
+        display: none;
+        margin-top: 20px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px 20px;
+        animation: cardIn 0.4s ease both;
+      }
+      .status-panel.active {
+        display: block;
+      }
+      .status-panel-title {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--text-muted);
+        margin-bottom: 14px;
+      }
+      .status-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 7px 0;
+        border-bottom: 1px solid rgba(26, 45, 66, 0.4);
+        font-size: 12px;
+      }
+      .status-row:last-child {
+        border-bottom: none;
+      }
+      .status-label {
+        color: var(--text-muted);
+      }
+      .status-value {
+        color: var(--text-primary);
+        font-weight: 500;
+      }
+      .status-value.green {
+        color: var(--accent-green);
+      }
+
+      /* ─── TOAST ─── */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 999;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 18px;
+        font-size: 12px;
+        max-width: 280px;
+        transform: translateY(80px);
+        opacity: 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      }
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .toast.success {
+        border-left: 3px solid var(--accent-green);
+      }
+      .toast.error {
+        border-left: 3px solid var(--accent-red);
+      }
+      .toast.info {
+        border-left: 3px solid var(--accent-blue);
+      }
+
+      /* Loading spinner */
+      .spinner {
+        display: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent-blue);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .btn-google.loading .spinner {
+        display: block;
+      }
+      .btn-google.loading .google-svg {
+        display: none;
+      }
+
+      /* Session badge */
+      .session-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--accent-green-dim);
+        border: 1px solid rgba(0, 245, 160, 0.2);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 10px;
+        color: var(--accent-green);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+      .session-badge .dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent-green);
+        border-radius: 50%;
+        animation: blink 1.5s ease-in-out infinite;
+      }
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      /* Logged-in view */
+      .logged-in-view {
+        display: none;
+      }
+      .logged-in-view.active {
+        display: block;
+      }
+      .auth-view {
+        display: block;
+      }
+      .auth-view.hidden {
+        display: none;
+      }
+
+      /* Sign-out button */
+      .btn-signout {
+        width: 100%;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 11px;
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-top: 16px;
+        letter-spacing: 0.5px;
+      }
+      .btn-signout:hover {
+        border-color: var(--accent-red);
+        color: var(--accent-red);
+        background: rgba(255, 64, 96, 0.05);
+      }
+
+      .avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 2px solid var(--border-glow);
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .avatar-placeholder {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 2px solid var(--border-glow);
+        background: linear-gradient(
+          135deg,
+          var(--accent-blue-dim),
+          var(--accent-green-dim)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+      .user-info-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .user-name {
+        font-family: var(--font-display);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .user-email {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 2px;
+      }
+
+      @media (max-width: 480px) {
+        .login-card {
+          padding: 28px 20px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="login-wrap">
+      <div class="login-card">
+        <!-- ─── LOGO ─── -->
+        <div class="logo-wrap">
+          <div class="logo-icon">📈</div>
+          <div>
+            <div class="logo-title">Trade<span>Vault</span></div>
+            <div class="logo-sub">Professional Trading Journal</div>
+          </div>
+        </div>
+
+        <!-- ─── AUTH VIEW (pre-login) ─── -->
+        <div class="auth-view" id="auth-view">
+          <div class="divider">
+            <span class="divider-text">Secure Sign In</span>
+          </div>
+
+          <button
+            class="btn-google"
+            id="btn-google"
+            onclick="handleGoogleLogin()"
+          >
+            <div class="spinner" id="spinner"></div>
+            <svg
+              class="google-svg"
+              id="google-icon"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            <span class="btn-google-text" id="btn-text"
+              >Continue with Google</span
+            >
+          </button>
+
+          <div class="features">
+            <div class="feature-item">
+              <span class="feature-dot"></span>
+              Session secured with OAuth 2.0 — no passwords stored
+            </div>
+            <div class="feature-item">
+              <span class="feature-dot"></span>
+              Your trade data is private and end-to-end encrypted
+            </div>
+            <div class="feature-item">
+              <span class="feature-dot"></span>
+              Access your journal from any device, anytime
+            </div>
+          </div>
+
+          <div class="login-footer">
+            By signing in you agree to our
+            <a href="#">Terms of Service</a> &amp;
+            <a href="#">Privacy Policy</a>.<br />
+            We never share your data with third parties.
+          </div>
+        </div>
+
+        <!-- ─── LOGGED-IN VIEW ─── -->
+        <div class="logged-in-view" id="logged-in-view">
+          <div class="session-badge">
+            <span class="dot"></span>
+            Session Active
+          </div>
+
+          <div class="user-info-row">
+            <div class="avatar-placeholder" id="user-avatar">👤</div>
+            <div>
+              <div class="user-name" id="user-name">—</div>
+              <div class="user-email" id="user-email">—</div>
+            </div>
+          </div>
+
+          <div class="status-panel active">
+            <div class="status-panel-title">Session Details</div>
+            <div class="status-row">
+              <span class="status-label">Logged in at</span>
+              <span class="status-value" id="login-time">—</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Provider</span>
+              <span class="status-value">Google OAuth 2.0</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Status</span>
+              <span class="status-value green">● Authenticated</span>
+            </div>
+            <div class="status-row">
+              <span class="status-label">Token</span>
+              <span class="status-value" id="token-preview">—</span>
+            </div>
+          </div>
+
+          <button class="btn-signout" onclick="handleSignOut()">
+            ← Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // ─── CONFIG ───────────────────────────────────────────────────
+      // Replace with your actual Google OAuth client ID
+      // Get one at: https://console.cloud.google.com/apis/credentials
+      const GOOGLE_CLIENT_ID =
+        "640444921230-ogtnj9o0kisesgi1qgraoq3m0p868rsd.apps.googleusercontent.com";
+
+      // Backend URL — update to your deployed server
+      const API_BASE = "http://localhost:3000";
+
+      // ─── TOAST ────────────────────────────────────────────────────
+      function toast(msg, type = "info") {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.className = `toast ${type} show`;
+        clearTimeout(el._t);
+        el._t = setTimeout(() => el.classList.remove("show"), 3200);
+      }
+
+      // ─── LOAD GOOGLE GSI LIBRARY ──────────────────────────────────
+      function loadGoogleSDK() {
+        return new Promise((resolve) => {
+          if (window.google) return resolve();
+          const script = document.createElement("script");
+          script.src = "https://accounts.google.com/gsi/client";
+          script.async = true;
+          script.defer = true;
+          script.onload = resolve;
+          document.head.appendChild(script);
+        });
+      }
+
+      // ─── HANDLE GOOGLE LOGIN ──────────────────────────────────────
+      async function handleGoogleLogin() {
+        const btn = document.getElementById("btn-google");
+        btn.classList.add("loading");
+        document.getElementById("btn-text").textContent = "Connecting...";
+
+        try {
+          await loadGoogleSDK();
+
+          google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: async (response) => {
+              // response.credential is the Google ID token (JWT)
+              await sendTokenToBackend(response.credential);
+            },
+            auto_select: false,
+            cancel_on_tap_outside: true,
+          });
+
+          // Trigger One Tap or redirect to consent screen
+          google.accounts.id.prompt((notification) => {
+            if (
+              notification.isNotDisplayed() ||
+              notification.isSkippedMoment()
+            ) {
+              // Fall back to popup flow
+              google.accounts.oauth2
+                .initTokenClient({
+                  client_id: GOOGLE_CLIENT_ID,
+                  scope: "openid email profile",
+                  callback: async (tokenResponse) => {
+                    if (tokenResponse.error)
+                      throw new Error(tokenResponse.error);
+                    // Fetch user info with access token
+                    await fetchUserInfoAndLogin(tokenResponse.access_token);
+                  },
+                })
+                .requestAccessToken({ prompt: "consent" });
+            }
+          });
+        } catch (err) {
+          console.error(err);
+          toast("Could not connect to Google. Check client ID.", "error");
+        } finally {
+          btn.classList.remove("loading");
+          document.getElementById("btn-text").textContent =
+            "Continue with Google";
+        }
+      }
+
+      // ─── SEND ID TOKEN TO BACKEND ─────────────────────────────────
+      async function sendTokenToBackend(idToken) {
+        try {
+          const res = await fetch(`${API_BASE}/auth/google/callback`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ id_token: idToken }),
+          });
+          if (!res.ok) throw new Error("Backend error: " + res.status);
+          const data = await res.json();
+          onLoginSuccess(data.user, data.session_token);
+        } catch (err) {
+          console.error(err);
+          toast("Login failed. Is the server running?", "error");
+        }
+      }
+
+      // ─── FALLBACK: FETCH USERINFO WITH ACCESS TOKEN ───────────────
+      async function fetchUserInfoAndLogin(accessToken) {
+        try {
+          const infoRes = await fetch(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            {
+              headers: { Authorization: `Bearer ${accessToken}` },
+            },
+          );
+          const profile = await infoRes.json();
+
+          // Send profile to backend
+          const res = await fetch(`${API_BASE}/auth/google/callback`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ profile }),
+          });
+          if (!res.ok) throw new Error("Backend error: " + res.status);
+          const data = await res.json();
+          onLoginSuccess(data.user, data.session_token);
+        } catch (err) {
+          console.error(err);
+          toast("Login failed. Is the server running?", "error");
+        }
+      }
+
+      // ─── ON LOGIN SUCCESS ─────────────────────────────────────────
+      function onLoginSuccess(user, sessionToken) {
+        // Persist session in localStorage
+        const session = {
+          user,
+          session_token: sessionToken,
+          login_time: new Date().toISOString(),
+        };
+        localStorage.setItem("tv_session", JSON.stringify(session));
+
+        // Update UI
+        document.getElementById("auth-view").classList.add("hidden");
+        document.getElementById("logged-in-view").classList.add("active");
+
+        document.getElementById("user-name").textContent = user.name || "User";
+        document.getElementById("user-email").textContent = user.email || "";
+        document.getElementById("login-time").textContent =
+          new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        document.getElementById("token-preview").textContent = sessionToken
+          ? sessionToken.slice(0, 12) + "••••"
+          : "—";
+
+        // Avatar
+        if (user.picture) {
+          const img = document.createElement("img");
+          img.src = user.picture;
+          img.className = "avatar";
+          img.alt = user.name;
+          document.getElementById("user-avatar").replaceWith(img);
+        } else {
+          document.getElementById("user-avatar").textContent = (user.name ||
+            "U")[0].toUpperCase();
+        }
+
+        toast(
+          `Welcome back, ${user.name?.split(" ")[0] || "Trader"}! 🎉`,
+          "success",
+        );
+      }
+
+      // ─── SIGN OUT ─────────────────────────────────────────────────
+      async function handleSignOut() {
+        try {
+          await fetch(`${API_BASE}/auth/logout`, {
+            method: "POST",
+            credentials: "include",
+          });
+        } catch (_) {}
+
+        localStorage.removeItem("tv_session");
+        if (window.google) google.accounts.id.disableAutoSelect();
+
+        document.getElementById("auth-view").classList.remove("hidden");
+        document.getElementById("logged-in-view").classList.remove("active");
+        toast("Signed out successfully.", "info");
+      }
+
+      // ─── RESTORE SESSION ON LOAD ──────────────────────────────────
+      async function restoreSession() {
+        const raw = localStorage.getItem("tv_session");
+        if (!raw) return;
+
+        try {
+          const { user, session_token, login_time } = JSON.parse(raw);
+
+          // Validate token with backend
+          const res = await fetch(`${API_BASE}/user/me`, {
+            headers: { Authorization: `Bearer ${session_token}` },
+            credentials: "include",
+          });
+
+          if (!res.ok) {
+            localStorage.removeItem("tv_session");
+            return;
+          }
+
+          const data = await res.json();
+          onLoginSuccess(data.user, session_token);
+        } catch (_) {
+          // Backend unreachable — still show UI from cache
+          const { user, session_token } = JSON.parse(raw);
+          onLoginSuccess(user, session_token);
+          toast("Restored local session (server offline)", "info");
+        }
+      }
+
+      // ─── INIT ─────────────────────────────────────────────────────
+      window.addEventListener("DOMContentLoaded", () => {
+        restoreSession();
+      });
+    </script>
+  </body>
+</html>
