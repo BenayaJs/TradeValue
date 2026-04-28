@@ -1,0 +1,2 @@
+# TradeValue
+About Trading Journal
